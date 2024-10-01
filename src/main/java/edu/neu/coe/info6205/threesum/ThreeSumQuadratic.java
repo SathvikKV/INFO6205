@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.neu.coe.info6205.util.Stopwatch;
+
 /**
  * Implementation of ThreeSum which follows the approach of dividing the solution-space into
  * N sub-spaces where each sub-space corresponds to a fixed value for the middle index of the three values.
@@ -24,10 +26,23 @@ public class ThreeSumQuadratic implements ThreeSum {
     }
 
     public Triple[] getTriples() {
-        List<Triple> triples = new ArrayList<>();
-        for (int i = 0; i < length; i++) triples.addAll(getTriples(i));
-        Collections.sort(triples);
-        return triples.stream().distinct().toArray(Triple[]::new);
+        try(Stopwatch sw = new Stopwatch()) {
+
+            List<Triple> triples = new ArrayList<>();
+            for (int i = 0; i < length; i++) triples.addAll(getTriples(i));
+            Collections.sort(triples);
+
+            long timeTaken = sw.lap();
+            System.out.println("Time taken in 3SumQuadratic: " + timeTaken+ "ms");
+
+            return triples.stream().distinct().toArray(Triple[]::new);
+
+
+
+
+        }
+
+
     }
 
     /**
@@ -38,9 +53,37 @@ public class ThreeSumQuadratic implements ThreeSum {
      */
     public List<Triple> getTriples(int j) {
         List<Triple> triples = new ArrayList<>();
-        // TO BE IMPLEMENTED  : for each candidate, test if a[i] + a[j] + a[k] = 0.
-throw new RuntimeException("implementation missing");
+        // Initialize i an k pointers
+        int i = 0;
+        int k = length-1;
+
+
+        //Loop while i is less than j and k is greater than j
+        while (i<j && k>j){
+            int sum = a[i] + a[j] + a[k]; //Sum up the elements at the indices of i,j,k
+
+            if(sum == 0){
+                triples.add(new Triple(a[i], a[j], a[k]));  //Append the valid triple to the list
+                i++;
+                k--;
+
+            }
+            else if(sum<0){
+                i++;   // If sum is less than 0 then increment i to increase the sum
+
+            }
+            else{
+                k--;  // If sum is greater than 0 then decrement k to decrease the sum
+            }
+
+        }
+        return triples; //return the list of triples
+
     }
+
+
+
+
 
     private final int[] a;
     private final int length;

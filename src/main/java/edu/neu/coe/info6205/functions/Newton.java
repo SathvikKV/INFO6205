@@ -38,7 +38,7 @@ public class Newton {
     public Either<String, Double> solve(final double x0, final int maxTries, final double tolerance) {
         double x = x0;
         int tries = maxTries;
-        for (; tries > 0; tries--)
+        for (; tries > 0; tries--) {
             try {
                 final double y = f.apply(x);
                 if (Math.abs(y) < tolerance) return Either.right(x);
@@ -46,13 +46,13 @@ public class Newton {
             } catch (Exception e) {
                 return Either.left("Exception thrown solving " + equation + "=0, given x0=" + x0 + ", maxTries=" + maxTries + ", and tolerance=" + tolerance + " because " + e.getLocalizedMessage());
             }
+        }
         return Either.left(equation + "=0 did not converge given x0=" + x0 + ", maxTries=" + maxTries + ", and tolerance=" + tolerance);
     }
 
     public static void main(String[] args) {
-
         // Build the Newton's Approximation problem to be solved: cos(x) = x
-        Newton newton = new Newton("cos(x) - x", (double x) -> Math.cos(x) - x, (double x) -> -Math.sin(x) - 1);
+        Newton newton = new Newton("sin(x) - ln(x)", (double x) -> Math.sin(x) - Math.log(x), (double x) -> Math.cos(x) - 1/x);
 
         // Solve the problem starting with a value of x = 1;
         // requiring a precision of 10^-7;
