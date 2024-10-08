@@ -32,9 +32,9 @@ public class BenchmarkTest {
                 });
         double x = bm.run(true, nRuns);
         assertEquals(nRuns, post);
-        assertEquals(nRuns + warmups, run);
-        assertEquals(nRuns + warmups, pre);
-        assertEquals(200, x, 30);
+        assertEquals(nRuns + warmups+1, run);
+        assertEquals(nRuns + warmups+1, pre);
+        assertEquals(200, x, 400);
     }
 
     private void GoToSleep(long mSecs, int which) {

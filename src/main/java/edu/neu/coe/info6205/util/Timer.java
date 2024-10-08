@@ -69,11 +69,10 @@ public class Timer {
                 U result = function.apply(input);
                 if (postFunction != null) postFunction.accept(result);
             }
-        }
+            laps = 0;
+            ticks = 0;
 
-        // Reset lap count and ticks before starting the timed phase
-        laps = 0;
-        ticks = 0;
+        }
 
         // Perform the actual timed function executions
         for (int i = 0; i < n; i++) {
@@ -87,12 +86,15 @@ public class Timer {
             ticks += (end - start);  // Add the time taken for this lap
 
             if (postFunction != null) postFunction.accept(result);
-            lap();  // Increment lap count
+            lap();  //Increment lap count
         }
 
-        pause();  // Ensure the timer is paused
+        pause();  //Ensure the timer is paused
 
-        // Return the average time in milliseconds per lap
+        if(laps==0){
+            throw new IllegalStateException("No laps");
+        }
+        //Return the average time in milliseconds
         return meanLapTime();  // Convert to milliseconds
         // END SOLUTION
     }
