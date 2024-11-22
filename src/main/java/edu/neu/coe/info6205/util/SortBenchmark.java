@@ -10,6 +10,11 @@ import edu.neu.coe.info6205.sort.counting.MSDStringSort;
 import edu.neu.coe.info6205.sort.elementary.*;
 import edu.neu.coe.info6205.sort.linearithmic.TimSort;
 import edu.neu.coe.info6205.sort.linearithmic.*;
+import edu.neu.coe.info6205.sort.elementary.HeapSort;
+import edu.neu.coe.info6205.sort.linearithmic.MergeSort;
+import edu.neu.coe.info6205.sort.linearithmic.QuickSort_DualPivot;
+
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -83,6 +88,19 @@ public class SortBenchmark {
             runIntegerBucketSort(n);
         if (isConfigBenchmarkIntegerSorter("quicksort"))
             runIntegerQuickSort(n);
+
+        if (isConfigBenchmarkIntegerSorter("mergesort")) {
+            runIntegerMergeSort(n);
+        }
+        if (isConfigBenchmarkIntegerSorter("quicksortDualPivot")) {
+            runQuickSortDualPivot(n);
+        }
+
+
+        if (isConfigBenchmarkIntegerSorter("heapsort")) {
+            runIntegerHeapSort(n);
+        }
+
     }
 
     public void sortLocalDateTimes(final int n, Config config) throws IOException {
@@ -180,6 +198,8 @@ public class SortBenchmark {
             }
         }
 
+
+
         if (isConfigBenchmarkStringSorter("introsort") && nRunsLinearithmic > 0)
             try (SortWithHelper<String> sorter = new IntroSort<>(nWords, config)) {
                 runStringSortBenchmark(words, nWords, nRunsLinearithmic * 3, sorter, timeLoggersLinearithmic);
@@ -256,6 +276,65 @@ public class SortBenchmark {
         int runs = config.getInt(BENCHMARKINTEGERSORTERS, "runs", 1000);
         runIntegerSortBenchmark(numbers, N, runs, sorter, sorter::preProcess, timeLoggersLinearithmic);
     }
+
+    private void runIntegerMergeSort(int N) {
+        Helper<Integer> helper = new InstrumentedComparableHelper<>("MergeSortHelper", N, config);
+        SortWithHelper<Integer> sorter = new MergeSort<>(helper); // Pass the helper to the constructor
+        Integer[] numbers = helper.random(Integer.class, Random::nextInt); // Generate random numbers
+        int runs = config.getInt(BENCHMARKINTEGERSORTERS, "runs", 1000);
+        runIntegerSortBenchmark(numbers, N, runs, sorter, sorter::preProcess, timeLoggersLinearithmic);
+        helper.close(); // Log and clean up
+    }
+
+
+
+    private void runIntegerHeapSort(int N) {
+        Helper<Integer> helper = new InstrumentedComparableHelper<>("HeapSortHelper", N, config);
+        SortWithHelper<Integer> sorter = new HeapSort<>(helper);
+        Integer[] numbers = helper.random(Integer.class, Random::nextInt);
+        int runs = config.getInt(BENCHMARKINTEGERSORTERS, "runs", 1000);
+        runIntegerSortBenchmark(numbers, N, runs, sorter, sorter::preProcess, timeLoggersLinearithmic);
+        helper.close();
+    }
+
+
+
+
+    private void runMergeSort(int N) {
+        Helper<Integer> helper = HelperFactory.create("MergeSort", N, config);
+        try (SortWithHelper<Integer> sorter = new MergeSort<>(helper)) {
+            Integer[] array = helper.random(Integer.class, Random::nextInt);
+            int runs = config.getInt("benchmarkintegersorters", "runs", 100);
+            runIntegerSortBenchmark(array, N, runs, sorter, null, timeLoggersLinearithmic);
+
+        }
+
+    }
+
+    private void runQuickSortDualPivot(int N) {
+        Helper<Integer> helper = HelperFactory.create("QuickSortDualPivot", N, config);
+        try (SortWithHelper<Integer> sorter = new QuickSort_DualPivot<>(helper)) {
+            Integer[] array = helper.random(Integer.class, Random::nextInt);
+            int runs = config.getInt("benchmarkintegersorters", "runs", 100);
+            runIntegerSortBenchmark(array, N, runs, sorter, null, timeLoggersLinearithmic);
+        }
+    }
+
+    private void runHeapSort(int N) {
+        Helper<Integer> helper = HelperFactory.create("HeapSort", N, config);
+        try (SortWithHelper<Integer> sorter = new HeapSort<>(helper)) {
+            Integer[] array = helper.random(Integer.class, Random::nextInt);
+            int runs = config.getInt("benchmarkintegersorters", "runs", 100);
+            runIntegerSortBenchmark(array, N, runs, sorter, null, timeLoggersLinearithmic);
+        }
+    }
+
+
+
+
+
+
+
 
 
     private void sortStrings(Stream<Long> wordCounts) {
@@ -492,4 +571,11 @@ public class SortBenchmark {
     public static final String BENCHMARKINTEGERSORTERS = "benchmarkintegersorters";
 
     private final Config config;
+
+
+
+
+
+
+
 }
